@@ -47,6 +47,7 @@ var logger = {
 	    cout(m);
 	    fout(m);
 	};
+	log.info = doublelog;
 	log.warn = doublelog;
 	log.error = doublelog;
 	return log;

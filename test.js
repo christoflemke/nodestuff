@@ -5,7 +5,7 @@ var logging = require('./logger.js');
 var log = logging.createDefaultLogger('log.log');
 
 var couchoptions = {
-    uri : 'http://localhost:5984/',
+    uri : 'http://10.0.0.101:5984/',
     logger : log
 };
 
@@ -14,9 +14,10 @@ var listTorrents = function(response) {
 	return t.uploadRatio;
     });
     _.each(sorted,log,debug);
-}
+};
 
 var initialized = function(rpc) {
+
     var couch = couchdb(couchoptions);
 
     var torrentEventFields = {
@@ -34,7 +35,7 @@ var initialized = function(rpc) {
 	    request['arguments'].fields.push(f);
 	});
 	return request;
-    }
+    };
     var updateDocument = function(torrent) {
 	var create = function() {
 	    log.info('create');
@@ -66,7 +67,7 @@ var initialized = function(rpc) {
 	    };
 	    poll();
 	});
-    }
+    };
     initDb();
 };
 
@@ -77,4 +78,5 @@ var options = {
     url : "http://10.0.0.195:9091/transmission/rpc/",
     debug : false
 };
+console.log("init transmission");
 transmission(options,initialized);

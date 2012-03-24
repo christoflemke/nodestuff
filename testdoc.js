@@ -5,18 +5,23 @@ querystring = require('querystring');
 var log = logging.createDefaultLogger('log.log');
 
 var couchoptions = {
-    uri : 'http://localhost:5984/',
-    log : log
+    uri : 'http://10.0.0.101:5984/',
+    log : log,
+    user : "dbtest",
+    pass : "Cicseocbel8"
 };
 var couch = couchdb(couchoptions);
 
-couch.post('test/_temp_viwe/',{
-    language : 'javascript',
+couch.update('test/_design/show',{
+    id : '_design/show',
     views : {
-	show : {
-	    map : "function(doc) {emit(doc.name,doc)}"
+	foo : {
+	    map : function(doc) {
+		emit(doc.name,doc.sizeWhenDone);
+	    }
 	}
     }
 },function(doc) {
+  console.log('received response');
     log.info(doc);
 });

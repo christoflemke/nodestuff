@@ -1,4 +1,5 @@
-var request = require('request');
+var request = require('request')
+_ = require('underscore');
 var couchdb = function(options){
     var log = options.log || {
 	error : console.log,
@@ -9,7 +10,7 @@ var couchdb = function(options){
     var handleResponse = function(callback,errorhandler) {
 	return function(e,r,b) {
 	    log.info(b);
-	    if(b && (r.headers['content-type'] === 'application/json')) {
+	    if(!e && b && (r.headers['content-type'] === 'application/json')) {
 		//console.log(r);
 		try {
 		    b = JSON.parse(b);
@@ -27,7 +28,7 @@ var couchdb = function(options){
 	    }
 	    else
 	    {
-		if(b.error) {
+		if(b && b.error) {
 		    log.error(r);
 		    if(errorhandler) {
 			errorhandler(b);
@@ -39,14 +40,43 @@ var couchdb = function(options){
 	    }
 	};
     };
+    var stringify = function(parent,childName) {
+	if(childName) {
+	    var child = parent[childName];
+	    if(_.isFunction(child)) {
+		parent[childName] = child.toString();
+	    }
+	    else {
+		if(typeof child === 'object') {
+		    _.each(_.keys(child),function(key) {
+			stringify(child,key);
+		    });
+		}
+	    }
+	    
+	}
+	else
+	{
+	    if(parent) {
+		_.each(_.keys(parent),function(key) {
+		    stringify(parent,key);
+		});
+		return parent;
+	    }
+	}
+	
+    };
     var makeOptions = function(target,method,body) {
+	var auth = "Basic " + new Buffer(options.user + ":" + options.pass).toString("base64");
 	var op = {
 	    url : options.uri + target,
 	    method : method,
-	    json : body,
+	    json : stringify(body),
 	    headers : {
-		'Accept' : 'application/json'
-	    }
+		'Accept' : 'application/json',
+		'Authorization' : auth
+	    },
+	    
 	};
 	//console.log(op);
 	return op;
