@@ -1,0 +1,12 @@
+{
+  "name": "tournament-service",
+  "description": "execute round robin tournaments",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "expect.js": "0.2.x",
+    "mocha": "1.8.x",
+    "underscore": "1.4.x"
+  }
+}
